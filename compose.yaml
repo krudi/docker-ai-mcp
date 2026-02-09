@@ -1,0 +1,67 @@
+name: ${COMPOSE_PROJECT_NAME:-docker-ai-mcp}
+
+services:
+  docker-ai-mcp-gateway:
+    image: docker/mcp-gateway:latest
+    container_name: ${COMPOSE_PROJECT_NAME}-mcp-gateway
+    profiles: ["mcp"]
+    command:
+      - --catalog=${MCP_CATALOG_URL:-https://desktop.docker.com/mcp/catalog/v2/catalog.yaml}
+      - --servers=${MCP_SERVERS:-github-official,filesystem,fetch,dockerhub,context7}
+      - --config=/config/config.yaml
+      - --transport=streaming
+      - --port=8811
+      - --secrets=/run/secrets/github_personal_access_token:/run/secrets/docker_personal_access_token
+    environment:
+      - MCP_GATEWAY_AUTH_TOKEN_FILE=/run/secrets/mcp_gateway_auth_token
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ./config:/config:ro
+    ports:
+      - "${MCP_IP}:${MCP_PORT}:8811"
+    secrets:
+      - github_personal_access_token
+      - docker_personal_access_token
+      - mcp_gateway_auth_token
+    restart: unless-stopped
+    logging:
+      options:
+        max-size: 10m
+        max-file: "3"
+    security_opt:
+      - "no-new-privileges:true"
+    cap_drop:
+      - ALL
+    read_only: true
+    tmpfs:
+      - /tmp
+    networks:
+      - mcp
+    deploy:
+      resources:
+        limits:
+          cpus: "0.60"
+          memory: 512M
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "wget -qO- http://127.0.0.1:8811/mcp >/dev/null 2>&1 || exit 1",
+        ]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+
+secrets:
+  github_personal_access_token:
+    file: ./secrets/github_personal_access_token
+  docker_personal_access_token:
+    file: ./secrets/docker_personal_access_token
+  mcp_gateway_auth_token:
+    file: ./secrets/mcp_gateway_auth_token
+
+networks:
+  mcp:
+    name: ${COMPOSE_PROJECT_NAME}-network
+    driver: bridge

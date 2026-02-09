@@ -1,0 +1,9 @@
+{
+  "servers": {
+    "docker-ai-mcp-gateway": {
+      "type": "streaming",
+      "url": "http://localhost:8811/mcp"
+    }
+  },
+  "inputs": []
+}

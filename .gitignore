@@ -1,0 +1,26 @@
+# Environment files
+*.env
+!.env-*
+
+# Secrets folder (keep template files)
+secrets/*
+!secrets/README.md
+!secrets/.gitkeep
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Compiled artifacts files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Secrets files
+*.der
+*.key
+*.pem

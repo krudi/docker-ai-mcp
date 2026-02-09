@@ -1,0 +1,36 @@
+# Environment files
+*.env
+
+# OS files
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Git metadata
+.git
+.gitignore
+
+# Logs
+*.log
+logs/
+
+# Local editor config
+.vscode/
+.idea/
+
+# Docker Compose files (not needed for builds)
+compose.yaml
+**/compose.yaml
+
+# Compiled artifacts files
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Secrets files
+*.der
+*.key
+*.pem
